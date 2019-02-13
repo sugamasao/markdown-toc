@@ -32,7 +32,8 @@ func main() {
 
 	file, err := os.Open(os.Args[1])
 	if err != nil {
-		panic(err)
+		fmt.Printf("%v\n", err)
+		os.Exit(1)
 	}
 	defer file.Close()
 
