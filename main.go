@@ -7,8 +7,28 @@ import (
 	"strings"
 )
 
+func outputToc(path string) {
+	file, err := os.Open(path)
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	if err := scanner.Err(); err != nil {
+		fmt.Printf("%v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("parse [%s]\n\n", os.Args[1])
+	for _, value := range parseMarkdown(scanner) {
+		fmt.Println(value)
+	}
+}
+
 // parse is markdown parse to index
-func parse(scanner *bufio.Scanner) []string {
+func parseMarkdown(scanner *bufio.Scanner) []string {
 	toc := make([]string, 0, 128)
 	inCodeSyntax := false
 	for scanner.Scan() {
@@ -30,20 +50,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	file, err := os.Open(os.Args[1])
-	if err != nil {
-		fmt.Printf("%v\n", err)
-		os.Exit(1)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	if err := scanner.Err(); err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("parse [%s]\n\n", os.Args[1])
-	for _, value := range parse(scanner) {
-		fmt.Println(value)
-	}
+	outputToc(os.Args[1])
 }
